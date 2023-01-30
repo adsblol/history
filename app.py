@@ -66,10 +66,10 @@ async def store_data(app):
         if not candidate:
             print('No candidate found')
             return
-        # Store the candidate in /app/to_store/YYYY/MM/DD/HH/MM/adsblol-YYYY-MM-DD-HH-MM-SS.json.gz (pigz)
+        # Store the candidate in /out/YYYY/MM/DD/HH/MM/adsblol-YYYY-MM-DD-HH-MM-SS.json.gz (pigz)
         candidate_datetime = datetime.fromtimestamp(candidate["now"])
         candidate_datetime_str = candidate_datetime.strftime("%Y/%m/%d/%H/%M/adsblol-%Y-%m-%d-%H-%M-%S.json.gz")
-        candidate_path = f"/app/to_store/{candidate_datetime_str}"
+        candidate_path = f"/out/{candidate_datetime_str}"
         async with aiofiles.open(candidate_path, mode='wb') as f:
             await f.write(candidate)
         # Update app["last_stored_at"]
