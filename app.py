@@ -8,7 +8,7 @@ import aiofiles
 from pigz_python import PigzFile
 from datetime import datetime
 routes = web.RouteTableDef()
-from .settings import HUB, PORT
+from settings import HUB, PORT
 
 async def fetch_remote_data(app):
     # This function will update the app["aircrafts"] list and store the last 30 copies of the aircrafts.json file
