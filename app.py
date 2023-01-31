@@ -16,29 +16,31 @@ async def fetch_remote_data(app):
     # It will also notify the function store_data() if the last_aircrafts_ts is more than 5 seconds old
     last_aircrafts_ts = 0
     try:
-        while True:
-            async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(timeout=1) as session:
+            while True:
                 # aircrafts.json
                 ips = [HUB]
                 for ip in ips:
                     aircrafts = []
-                    async with session.get(f"http://{ip}/aircraft.json") as resp:
-                            aircrafts = await resp.json()
+                    try:
+                        async with session.get(f"http://{ip}/aircraft.json") as resp:
+                                aircrafts = await resp.json()
 
-                            # Store the last 30 copies of the aircrafts.json file
-                            # If it's the same as the last one, don't store it
-                            if len(app["aircrafts"]) > 0 and app["aircrafts"][-1] == aircrafts:
-                                print("Same aircrafts.json, not storing")
-                                continue
-                            if len(app["aircrafts"]) > 30:
-                                app["aircrafts"].pop(0)
-                                print("aircrafts.json list is too long, removing the oldest one")
-                            app["aircrafts"].append(aircrafts)
-                            print("aircrafts.json stored, len=", len(app["aircrafts"]))
+                                # Store the last 30 copies of the aircrafts.json file
+                                # If it's the same as the last one, don't store it
+                                if len(app["aircrafts"]) > 0 and app["aircrafts"][-1] == aircrafts:
+                                    print("Same aircrafts.json, not storing")
+                                    continue
+                                if len(app["aircrafts"]) > 30:
+                                    app["aircrafts"].pop(0)
+                                    print("aircrafts.json list is too long, removing the oldest one")
+                                app["aircrafts"].append(aircrafts)
+                                print("aircrafts.json stored, len=", len(app["aircrafts"]))
 
-                            await store_data(app)
-                            
-            await asyncio.sleep(1)
+                                await store_data(app)
+                    except Exception as e:
+                        print(f"Error fetching aircrafts.json from {ip}: {e}")                            
+                await asyncio.sleep(1)
     except asyncio.CancelledError:
         print("Background task cancelled")
 
