@@ -1,3 +1,4 @@
+import traceback
 import json
 import os
 import asyncio
@@ -39,7 +40,9 @@ async def fetch_remote_data(app):
 
                                 await store_data(app)
                     except Exception as e:
-                        print(f"Error fetching aircrafts.json from {ip}: {e}")                            
+                        print(f"Error fetching aircrafts.json from {ip}: {e}")
+                        traceback.print_exc()
+                                      
                 await asyncio.sleep(1)
     except asyncio.CancelledError:
         print("Background task cancelled")
