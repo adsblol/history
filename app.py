@@ -17,7 +17,7 @@ async def fetch_remote_data(app):
     # It will also notify the function store_data() if the last_aircrafts_ts is more than 5 seconds old
     last_aircrafts_ts = 0
     try:
-        async with aiohttp.ClientSession(timeout=1) as session:
+        async with aiohttp.ClientSession(read_timeout=1.0, conn_timeout=1.0) as session:
             while True:
                 # aircrafts.json
                 ips = [HUB]
@@ -42,7 +42,7 @@ async def fetch_remote_data(app):
                     except Exception as e:
                         print(f"Error fetching aircrafts.json from {ip}: {e}")
                         traceback.print_exc()
-                                      
+
                 await asyncio.sleep(1)
     except asyncio.CancelledError:
         print("Background task cancelled")
